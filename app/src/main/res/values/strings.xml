@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Incidencias</string>
+
+    <!--Login String-->
+    <string name="text_view_title_login">Login</string>
+    <string name="edit_text_email_login">Ingresa tu correo eléctronico</string>
+    <string name="edit_text_password_login">Ingresa tu contreseña</string>
+    <string name="button_login_start">Iniciar Sesión</string>
+
+    <!--Home String -->
+    <string name="title_activity_home">Home</string>
+    <string name="text_view_title_home">Lista de Incidencias</string>
+    <string name="edit_text_searh_text_incidencias">Buscar Incidencia...</string>
+
+    <!--Add incidencias-->
+    <string name="title_activity_add_incidencias">Registro de Incidencias</string>
+    <string name="text_view_spinner_incidencia">Tipos de Incidencias</string>
+    <string name="edit_text_descripcion_incidencia">Ingresa la descripción de la incidencia</string>
+    <string name="action_settings">Settings</string>
+
+    <!--Buttons-->
+    <string name="button_guardar">Guardar Registro</string>
+
+    <!---Menu Item-->
+    <string name="menu_home">Home</string>
+    <string name="menu_retroalimentaciones">Retroalimentaciones</string>
+    <string name="menu_users">Usuarios</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_exit">Cerrar Sesión</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+</resources>
