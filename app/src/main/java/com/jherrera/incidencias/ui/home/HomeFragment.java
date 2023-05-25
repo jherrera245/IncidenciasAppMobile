@@ -11,13 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,7 +45,16 @@ public class HomeFragment extends Fragment {
     private JSONArray jsonArrayIncidencias;
     private EditText editTextSearch;
     private FloatingActionButton buttonAddInciencias;
+    private FloatingActionButton buttonOptions;
+    private FloatingActionButton buttonSiguiente;
+    private FloatingActionButton buttonAnterior;
+    private boolean isVisibleOptionButtons = false;
     private View viewContext;
+
+    //para paginacion
+    private int totalIncidencias = 0;
+    private int totalMostrado = 0;
+    private int pagina = 1;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -72,10 +79,38 @@ public class HomeFragment extends Fragment {
     }
 
     private void setActionsButtons() {
+        buttonOptions.setOnClickListener(view -> {
+            if (!isVisibleOptionButtons) {
+                buttonAnterior.show();
+                buttonSiguiente.show();
+                buttonAddInciencias.show();
+                isVisibleOptionButtons = true;
+            }else {
+                buttonAnterior.hide();
+                buttonSiguiente.hide();
+                buttonAddInciencias.hide();
+                isVisibleOptionButtons = false;
+            }
+        });
+
         buttonAddInciencias.setOnClickListener(view -> {
             Intent intent = new Intent(viewContext.getContext(), AddIncidenciasActivity.class);
             intent.putExtra("access_token", ACCESS_TOKEN);
             startActivity(intent);
+        });
+
+        buttonSiguiente.setOnClickListener(view -> {
+            if (totalMostrado < totalIncidencias) {
+                pagina++;
+                getIncidencias();
+            }
+        });
+
+        buttonAnterior.setOnClickListener(view -> {
+            if (pagina>0){
+                pagina--;
+                getIncidencias();
+            }
         });
     }
 
@@ -102,19 +137,28 @@ public class HomeFragment extends Fragment {
         this.viewContext = view;
         editTextSearch = viewContext.findViewById(R.id.editTextSearch);
         buttonAddInciencias = viewContext.findViewById(R.id.buttonAddInciencias);
+        buttonOptions = viewContext.findViewById(R.id.buttonOptions);
+        buttonSiguiente = viewContext.findViewById(R.id.buttonSiguiente);
+        buttonAnterior = viewContext.findViewById(R.id.buttonAnterior);
         recyclerViewIncidencias = viewContext.findViewById(R.id.recyclerIncidencias);
         recyclerViewIncidencias.setLayoutManager(new LinearLayoutManager(viewContext.getContext()));
+
+        buttonAddInciencias.setVisibility(View.GONE);
+        buttonAnterior.setVisibility(View.GONE);
+        buttonSiguiente.setVisibility(View.GONE);
     }
 
     private void getIncidencias() {
         RequestQueue queue = Volley.newRequestQueue(viewContext.getContext());
         try {
             String searchText = "searchText="+editTextSearch.getText().toString();
-            StringRequest request = new StringRequest(Request.Method.GET, API.URL+"/incidencias?"+searchText, response -> {
+            StringRequest request = new StringRequest(Request.Method.GET, API.URL+"/incidencias?"+searchText+"&page="+pagina, response -> {
                 try {
                     JSONObject json = new JSONObject(response);
                     JSONObject data = json.getJSONObject("incidencias");
                     jsonArrayIncidencias = data.getJSONArray("data");
+                    totalIncidencias = data.getInt("total");
+                    totalMostrado = data.getInt("to");
                     //configurando recycler view
                     IncidenciasAdapter adapter = new IncidenciasAdapter(jsonArrayIncidencias, viewContext.getContext());
                     recyclerViewIncidencias.setAdapter(adapter);

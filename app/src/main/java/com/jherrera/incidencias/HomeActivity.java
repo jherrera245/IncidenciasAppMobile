@@ -1,6 +1,7 @@
 package com.jherrera.incidencias;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +33,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.jherrera.incidencias.api.API;
 import com.jherrera.incidencias.controllers.IncidenciasAdapter;
 import com.jherrera.incidencias.databinding.ActivityHomeBinding;
@@ -61,9 +63,9 @@ public class HomeActivity extends AppCompatActivity {
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarHome.toolbar);
-        setTokenUser(); //obtenemos el valor del token
-        setUserProfile();//consultamos el perfil del usuario
+        setUser(); //congifiguracion del usuario
         setNavigationDrawer();
+        setUserConfiguration();
     }
 
     public void setNavigationDrawer() {
@@ -110,49 +112,13 @@ public class HomeActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 
-    private void setUserProfile() {
-        RequestQueue queue = Volley.newRequestQueue(HomeActivity.this);
-        try {
-            StringRequest request = new StringRequest(Request.Method.GET, API.URL+"/profile", response -> {
-                try {
-                    JSONObject json = new JSONObject(response);
-                     myUser = new UserLoged(
-                            json.getString("name"),
-                            json.getString("email"),
-                            Integer.parseInt(json.getString("is_admin"))
-                    );
-
-                     setUserConfiguration();
-                }catch (Exception e){
-                    Log.e("Error JSON", e.getMessage());
-                }
-            }, error -> {
-                Toast.makeText(HomeActivity.this, "Error petición "+error.getMessage(), Toast.LENGTH_SHORT).show();
-            }){
-                @Nullable
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String>  headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json");
-                    headers.put("Accept", "application/json");
-                    headers.put("Connection", "keep-alive");
-                    headers.put("Authorization", "Bearer "+ACCESS_TOKEN);
-                    return headers;
-                }
-            };
-
-            queue.add(request);
-        }catch (Exception e) {
-            Toast.makeText(HomeActivity.this, "Error en tiempo de ejecución "+e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void setUserConfiguration() {
         textViewUsername.setText(myUser.getName());
         textViewEmail.setText(myUser.getEmail());
 
         if (myUser.getRol() == 1) {
             textViewRol.setText("Admistrador");
+            registerToFireBaseTopic();
         }else {
             textViewRol.setText("Empleado");
             navigationView.getMenu().getItem(2).setEnabled(false);
@@ -164,6 +130,8 @@ public class HomeActivity extends AppCompatActivity {
                     if (cerrarSesion()) {
                         SharedPreferences preferences = getSharedPreferences("preferenceSession", Context.MODE_PRIVATE);
                         preferences.edit().clear().commit();
+                        Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                        startActivity(intent);
                         finish();
                     }
                     return false;
@@ -203,8 +171,30 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void setTokenUser() {
+    private void setUser() {
         SharedPreferences preferences = getSharedPreferences("preferenceSession", Context.MODE_PRIVATE);
         ACCESS_TOKEN = preferences.getString("access_token", null);
+        myUser = new UserLoged(
+                preferences.getString("name", null),
+                preferences.getString("email", null),
+                preferences.getInt("rol", 0)
+        );
+    }
+
+    private void registerToFireBaseTopic() {
+        Log.d("MainActivity", "Register");
+        FirebaseMessaging.getInstance().subscribeToTopic("reporte-incidencia").addOnCompleteListener(
+                task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("MainActivity", "Subscribed Topic");
+                    }else {
+                        Log.e("Error Topic","Error Task Topic");
+                    }
+                }
+        ).addOnFailureListener(
+                e -> {
+                    Log.e("Topic error", e.getMessage());
+                }
+        );
     }
 }

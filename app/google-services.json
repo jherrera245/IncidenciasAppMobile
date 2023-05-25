@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "825361855368",
+    "project_id": "incidencias-af514",
+    "storage_bucket": "incidencias-af514.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825361855368:android:5b8605b416c20921af403d",
+        "android_client_info": {
+          "package_name": "com.jherrera.incidencias"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825361855368-s3tc6e9u4do6i7erse2mn6snoecas8ce.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmF9a60DRQPfK73Bb6B0CtFyCx7VN9Fxs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825361855368-s3tc6e9u4do6i7erse2mn6snoecas8ce.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

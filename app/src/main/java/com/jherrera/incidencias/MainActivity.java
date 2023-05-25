@@ -1,5 +1,6 @@
 package com.jherrera.incidencias;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,7 +19,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.jherrera.incidencias.api.API;
+import com.jherrera.incidencias.models.UserLoged;
 
 import org.json.JSONObject;
 
@@ -31,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextEmail;
     private EditText editTextPassword;
     private Button buttonLogin;
+    private String tokenFirebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setInitComponents();
         setActionButtons();
+        setTokenFirebase();
     }
 
     /**
@@ -80,8 +89,16 @@ public class MainActivity extends AppCompatActivity {
                         if (json.getBoolean("status")) {
                             Intent intent  = new Intent(this, HomeActivity.class);
                             String token = json.getString("access_token");
+
+                            //cargamos la data del usuario
+                            UserLoged user = new UserLoged(
+                                    json.getString("name"),
+                                    json.getString("email"),
+                                    Integer.parseInt(json.getString("rol"))
+                            );
+
                             //guardamos el token de la session
-                            savePrefereces(token);
+                            savePrefereces(token, user);
                             startActivity(intent);
                             finish();
                         }
@@ -108,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
                     HashMap<String, String> params = new HashMap<String, String>();
                     params.put("email", editTextEmail.getText().toString());
                     params.put("password", editTextPassword.getText().toString());
+
+                    if (tokenFirebase != null) {
+                        params.put("firebase_token", tokenFirebase);
+                    }
+
                     return new JSONObject(params).toString().getBytes();
                 }
             };
@@ -118,11 +140,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void savePrefereces(String token) {
+    private void savePrefereces(String token, UserLoged user) {
         SharedPreferences preferences = getSharedPreferences("preferenceSession", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("access_token", token);
         editor.putBoolean("session", true);
+        editor.putString("name", user.getName());
+        editor.putString("email", user.getEmail());
+        editor.putInt("rol", user.getRol());
         editor.commit();
+    }
+
+    private void setTokenFirebase(){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(
+                task -> {
+                    if (task.isSuccessful()) {
+                        tokenFirebase = task.getResult();
+                    }else {
+                        Log.e("Error token", "No se puedo obtener el token de firebase");
+                    }
+                }
+        ).addOnFailureListener(e -> {
+            Log.e("Error interno", "No se puedo obtener el token de firebase");
+        });
     }
 }
