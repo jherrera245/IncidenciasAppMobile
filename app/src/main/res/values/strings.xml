@@ -20,6 +20,8 @@
 
     <!--Buttons-->
     <string name="button_guardar">Guardar Registro</string>
+    <string name="button_send_notificacion">Notificar a Administrador</string>
+    <string name="button_detalles">Mostrar Detalles</string>
 
     <!---Menu Item-->
     <string name="menu_home">Home</string>

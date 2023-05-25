@@ -7,16 +7,52 @@
     tools:context=".ui.home.HomeFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/buttonAddInciencias"
+        android:id="@+id/buttonOptions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_add_plus"
+        android:src="@drawable/ic_nav_home"
         app:backgroundTint="@color/white"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/buttonSiguiente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_siguiente"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/buttonAnterior"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/buttonAnterior"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_anterior"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/buttonOptions"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/buttonAddInciencias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_add_plus"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSiguiente"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
