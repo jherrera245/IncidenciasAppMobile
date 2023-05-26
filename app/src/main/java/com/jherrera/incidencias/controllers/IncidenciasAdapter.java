@@ -24,6 +24,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.jherrera.incidencias.HomeActivity;
+import com.jherrera.incidencias.ModIncidenciasActivity;
 import com.jherrera.incidencias.R;
 import com.jherrera.incidencias.api.API;
 import com.jherrera.incidencias.models.Incidencias;
@@ -99,7 +100,10 @@ public class IncidenciasAdapter extends RecyclerView.Adapter<IncidenciasAdapter.
         });
 
         holder.buttonDetalles.setOnClickListener(view -> {
-
+            Intent intent = new Intent(context, ModIncidenciasActivity.class);
+            intent.putExtra("id", incidencia.getId());
+            intent.putExtra("access_token", ACCESS_TOKEN);
+            context.startActivity(intent);
         });
     }
 

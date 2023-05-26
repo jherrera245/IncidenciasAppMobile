@@ -95,7 +95,6 @@ public class HomeFragment extends Fragment {
 
         buttonAddInciencias.setOnClickListener(view -> {
             Intent intent = new Intent(viewContext.getContext(), AddIncidenciasActivity.class);
-            intent.putExtra("access_token", ACCESS_TOKEN);
             startActivity(intent);
         });
 

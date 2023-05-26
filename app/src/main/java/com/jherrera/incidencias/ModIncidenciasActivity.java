@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,17 +36,19 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.jherrera.incidencias.api.API;
 import com.jherrera.incidencias.controllers.TiposIncidenciasSpinnerAdapter;
-import com.jherrera.incidencias.databinding.ActivityAddIncidenciasBinding;
+import com.jherrera.incidencias.databinding.ActivityModIncidenciasBinding;
 import com.jherrera.incidencias.models.TiposIncidencias;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,28 +57,31 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class AddIncidenciasActivity extends AppCompatActivity {
+public class ModIncidenciasActivity extends AppCompatActivity {
 
+    private int idIncidencia = 0;
     private static String ACCESS_TOKEN;
     private ArrayList<TiposIncidencias> listaTiposIncidencias;
     private TiposIncidenciasSpinnerAdapter tiposIncidenciasSpinnerAdapter;
-    private ActivityAddIncidenciasBinding binding;
+    private ActivityModIncidenciasBinding binding;
     private FloatingActionButton buttonTakePicture;
     private ImageView imageViewTake;
     private Spinner spinnerTiposIncidencias;
     private int idTipoIncidencia;
     private EditText editTextDescripcionIncidencia;
-    private Button buttonGuadarIncidencia;
+    private Button buttonActualizarIncidencia;
+    private Button buttonBorrarInicidencia;
     private Uri uriImagen;
     private String imagenBase64;
     private static final int REQUEST_CODE_CAMERA = 100;
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 200;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityAddIncidenciasBinding.inflate(getLayoutInflater());
+        binding = ActivityModIncidenciasBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Toolbar toolbar = binding.toolbar;
@@ -89,6 +95,7 @@ public class AddIncidenciasActivity extends AppCompatActivity {
         setDataSpinner();
         setIdTipoInciencias();
         setActionButtons();
+        getIncidencia();
     }
 
     //Este metodo pemite determinar el id de tipo de incidencia seleccionado
@@ -102,17 +109,23 @@ public class AddIncidenciasActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
+                for (int i = 0; i < adapterView.getCount(); i++) {
+                    TiposIncidencias item = (TiposIncidencias) adapterView.getItemAtPosition(i);
+                    if (item.getIdTipoInciencia() == idTipoIncidencia) {
+                        spinnerTiposIncidencias.setSelection(i);
+                    }
+                }
             }
         });
     }
 
     private void setInitComponents() {
-        buttonTakePicture = binding.buttonTakePicture;
-        imageViewTake = binding.imageViewTake;
-        spinnerTiposIncidencias = findViewById(R.id.spinnerTipoIncidencias);
-        editTextDescripcionIncidencia = findViewById(R.id.editTextDescripcionInciencia);
-        buttonGuadarIncidencia = findViewById(R.id.buttonGuardarIncidencias);
+        buttonTakePicture = binding.buttonModTakePicture;
+        imageViewTake = binding.imageViewModTake;
+        spinnerTiposIncidencias = findViewById(R.id.spinnerModTipoIncidencias);
+        editTextDescripcionIncidencia = findViewById(R.id.editTextModDescripcionInciencia);
+        buttonActualizarIncidencia = findViewById(R.id.buttonActualizarIncidencias);
+        buttonBorrarInicidencia = findViewById(R.id.buttonBorrarIncidencias);
         listaTiposIncidencias = new ArrayList<>();
     }
 
@@ -121,24 +134,28 @@ public class AddIncidenciasActivity extends AppCompatActivity {
             processPicture();
         });
 
-        buttonGuadarIncidencia.setOnClickListener(view -> {
-            if (!editTextDescripcionIncidencia.getText().toString().isEmpty() && uriImagen != null) {
-                guadarIncidencia();
+        buttonActualizarIncidencia.setOnClickListener(view -> {
+            if (!editTextDescripcionIncidencia.getText().toString().isEmpty() && imagenBase64 != null) {
+                actualizarIncidencia();
             }else {
-                Toast.makeText(AddIncidenciasActivity.this, "Ingresa la descripción de la incidencia", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ModIncidenciasActivity.this, "Ingresa la descripción de la incidencia", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        buttonBorrarInicidencia.setOnClickListener(view -> {
+            borrarIncidencia();
         });
     }
 
-    private void guadarIncidencia() {
+    private void actualizarIncidencia() {
         //Toast.makeText(this, String.valueOf(idTipoIncidencia) +"/n"+ bitmapImagen, Toast.LENGTH_LONG).show();
         RequestQueue queue = Volley.newRequestQueue(this);
         try {
-            StringRequest request = new StringRequest(Request.Method.POST, API.URL+"/incidencias", response -> {
+            StringRequest request = new StringRequest(Request.Method.PUT, API.URL+"/incidencias/"+idIncidencia, response -> {
                 try {
                     JSONObject json = new JSONObject(response);
                     if (json.has("message")){
-                        Toast.makeText(AddIncidenciasActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ModIncidenciasActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
                     }
                 }catch (Exception e){
                     Log.e("Error JSON", e.getMessage());
@@ -172,6 +189,73 @@ public class AddIncidenciasActivity extends AppCompatActivity {
         }
     }
 
+    private void borrarIncidencia() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        try {
+            StringRequest request = new StringRequest(Request.Method.DELETE, API.URL+"/incidencias/"+idIncidencia, response -> {
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if (json.has("message")){
+                        Toast.makeText(ModIncidenciasActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){
+                    Log.e("Error JSON", e.getMessage());
+                }
+            }, error -> {
+                Toast.makeText(this, "Error petición "+error.getMessage(), Toast.LENGTH_LONG).show();
+            }){
+                @Nullable
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("Accept", "application/json");
+                    headers.put("Connection", "keep-alive");
+                    headers.put("Authorization", "Bearer "+ACCESS_TOKEN);
+                    return headers;
+                }
+            };
+            queue.add(request);
+        }catch (Exception e) {
+            Toast.makeText(this, "Error en tiempo de ejecución "+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void getIncidencia() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        try {
+            StringRequest request = new StringRequest(Request.Method.GET, API.URL+"/get-incidencia?id="+idIncidencia, response -> {
+                try {
+                    JSONObject json = new JSONObject(response);
+                    JSONObject incidencia = json.getJSONObject("data");
+                    Picasso.get().load(API.URL_IMG+"/"+incidencia.getString("imagen")).into(imageViewTake);
+                    idTipoIncidencia = Integer.parseInt(incidencia.getString("id_tipo_incidencia"));
+                    setIdTipoInciencias();
+                    editTextDescripcionIncidencia.setText(incidencia.getString("descripcion"));
+                    imagenBase64 = json.getString("imagenBase64");
+                }catch (Exception e){
+                    Log.e("Error JSON", e.getMessage());
+                }
+            }, error -> {
+                Toast.makeText(this, "Error petición "+error.getMessage(), Toast.LENGTH_LONG).show();
+            }){
+                @Nullable
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("Accept", "application/json");
+                    headers.put("Connection", "keep-alive");
+                    headers.put("Authorization", "Bearer "+ACCESS_TOKEN);
+                    return headers;
+                }
+            };
+            queue.add(request);
+        }catch (Exception e) {
+            Toast.makeText(this, "Error en tiempo de ejecución "+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void setDataSpinner() {
         RequestQueue queue = Volley.newRequestQueue(this);
         try {
@@ -181,7 +265,7 @@ public class AddIncidenciasActivity extends AppCompatActivity {
                     JSONArray data = json.getJSONArray("tipos");
                     setDataArrayListTiposIncidencias(data);
                     tiposIncidenciasSpinnerAdapter = new TiposIncidenciasSpinnerAdapter(
-                            AddIncidenciasActivity.this,
+                            ModIncidenciasActivity.this,
                             listaTiposIncidencias
                     );
                     spinnerTiposIncidencias.setAdapter(tiposIncidenciasSpinnerAdapter);
@@ -326,5 +410,6 @@ public class AddIncidenciasActivity extends AppCompatActivity {
     private void setTokenUser() {
         SharedPreferences preferences = getSharedPreferences("preferenceSession", Context.MODE_PRIVATE);
         ACCESS_TOKEN = preferences.getString("access_token", null);
+        idIncidencia = getIntent().getIntExtra("id", 0);
     }
 }

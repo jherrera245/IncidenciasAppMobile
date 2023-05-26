@@ -22,6 +22,8 @@
     <string name="button_guardar">Guardar Registro</string>
     <string name="button_send_notificacion">Notificar a Administrador</string>
     <string name="button_detalles">Mostrar Detalles</string>
+    <string name="button_actualizar">Actualizar Registro</string>
+    <string name="button_borrar">Borrar Registro</string>
 
     <!---Menu Item-->
     <string name="menu_home">Home</string>
@@ -34,4 +36,7 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
+
+    <!--Mod Incidencias -->
+    <string name="title_activity_mod_incidencias">Detalles Incidencias</string>
 </resources>
