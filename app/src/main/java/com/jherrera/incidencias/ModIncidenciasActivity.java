@@ -109,12 +109,7 @@ public class ModIncidenciasActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                for (int i = 0; i < adapterView.getCount(); i++) {
-                    TiposIncidencias item = (TiposIncidencias) adapterView.getItemAtPosition(i);
-                    if (item.getIdTipoInciencia() == idTipoIncidencia) {
-                        spinnerTiposIncidencias.setSelection(i);
-                    }
-                }
+
             }
         });
     }
@@ -230,7 +225,7 @@ public class ModIncidenciasActivity extends AppCompatActivity {
                     JSONObject incidencia = json.getJSONObject("data");
                     Picasso.get().load(API.URL_IMG+"/"+incidencia.getString("imagen")).into(imageViewTake);
                     idTipoIncidencia = Integer.parseInt(incidencia.getString("id_tipo_incidencia"));
-                    setIdTipoInciencias();
+                    setSelectIdTipoIncidencia(idTipoIncidencia);
                     editTextDescripcionIncidencia.setText(incidencia.getString("descripcion"));
                     imagenBase64 = json.getString("imagenBase64");
                 }catch (Exception e){
@@ -253,6 +248,15 @@ public class ModIncidenciasActivity extends AppCompatActivity {
             queue.add(request);
         }catch (Exception e) {
             Toast.makeText(this, "Error en tiempo de ejecución "+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setSelectIdTipoIncidencia(int idTipoIncidencia) {
+        for (int i = 0; i < spinnerTiposIncidencias.getCount(); i++) {
+            TiposIncidencias item = (TiposIncidencias) spinnerTiposIncidencias.getItemAtPosition(i);
+            if (item.getIdTipoInciencia() == idTipoIncidencia) {
+                spinnerTiposIncidencias.setSelection(i);
+            }
         }
     }
 
