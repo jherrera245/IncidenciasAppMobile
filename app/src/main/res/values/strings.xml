@@ -38,9 +38,12 @@
 
     <!-- Add User -->
     <string name="text_view_spinner_empleados">Lista de empleados</string>
+    <string name="text_view_radio_group_rol">Roles</string>
     <string name="edit_text_name">Ingresa el nombre de usuario</string>
     <string name="edit_text_email">Ingresa el correo electronico</string>
     <string name="edit_text_password">Ingresa la contraseña</string>
+    <string name="radio_button_admin">Administrador</string>
+    <string name="radio_button_empleado">Empleado</string>
 
     <!--Buttons-->
     <string name="button_guardar">Guardar Registro</string>

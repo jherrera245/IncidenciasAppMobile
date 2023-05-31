@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -42,7 +43,11 @@ public class AddUsuarioActivity extends AppCompatActivity {
     private EditText editTextName;
     private EditText editTextEmail;
     private EditText editTextPassword;
+
+    private RadioButton radioButtonAdmin;
+    private RadioButton radioButtonEmpleado;
     private Button buttonGuadarUser;
+    private int rolUser = 0; //enviar esta variable por volley
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +66,11 @@ public class AddUsuarioActivity extends AppCompatActivity {
         editTextName = findViewById(R.id.editTextName);
         editTextEmail = findViewById(R.id.editTextName);
         editTextPassword = findViewById(R.id.editTextName);
+        radioButtonAdmin = findViewById(R.id.radioButtonAdmin);
+        radioButtonEmpleado = findViewById(R.id.radioButtonEmpleado);
         buttonGuadarUser = findViewById(R.id.buttonGuadarUser);
         listaEmpleados = new ArrayList<>();
+        radioButtonEmpleado.setChecked(true);
     }
 
     private void setDataSpinner() {
@@ -135,8 +143,19 @@ public class AddUsuarioActivity extends AppCompatActivity {
     private void setActionButtons() {
         //agregar aqui funciones de botones
         buttonGuadarUser.setOnClickListener(view -> {
-
+            setRolUsuario();
+            //agregar if con validaciones de campos
         });
+    }
+
+    private void setRolUsuario() {
+        if (radioButtonEmpleado.isChecked()) {
+            rolUser = 0;
+        }
+
+        if (radioButtonAdmin.isChecked()) {
+            rolUser = 1;
+        }
     }
 
     private void setTokenUser() {

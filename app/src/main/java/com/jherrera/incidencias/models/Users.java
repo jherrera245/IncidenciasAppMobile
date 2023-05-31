@@ -6,6 +6,7 @@ public class Users {
     private String email;
     private String nombreEmpleado;
     private int rol;
+
     public Users(int id, String username, String email, String nombreEmpleado, int rol) {
         this.id = id;
         this.username = username;

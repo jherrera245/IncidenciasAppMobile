@@ -36,14 +36,14 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         setTokenUser();
     }
 
-    private Users getUser(JSONObject jsonIncidencia) {
+    private Users getUser(JSONObject jsonUser) {
         try {
             return new Users(
-                    Integer.parseInt(jsonIncidencia.getString("id")),
-                    jsonIncidencia.getString("name"),
-                    jsonIncidencia.getString("email"),
-                    jsonIncidencia.getString("nombres") + " " + jsonIncidencia.getString("apellidos"),
-                    Integer.parseInt(jsonIncidencia.getString("is_admin"))
+                    Integer.parseInt(jsonUser.getString("id")),
+                    jsonUser.getString("name"),
+                    jsonUser.getString("email"),
+                    jsonUser.getString("nombres") + " " + jsonUser.getString("apellidos"),
+                    Integer.parseInt(jsonUser.getString("is_admin"))
             );
         }catch (JSONException e) {
             Log.e("Error al crear objeto:", e.getMessage());
