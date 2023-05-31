@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -125,7 +126,7 @@ public class AddIncidenciasActivity extends AppCompatActivity {
             if (!editTextDescripcionIncidencia.getText().toString().isEmpty() && uriImagen != null) {
                 guadarIncidencia();
             }else {
-                Toast.makeText(AddIncidenciasActivity.this, "Ingresa la descripción de la incidencia", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Ingresa la descripción de la incidencia", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -138,7 +139,7 @@ public class AddIncidenciasActivity extends AppCompatActivity {
                 try {
                     JSONObject json = new JSONObject(response);
                     if (json.has("message")){
-                        Toast.makeText(AddIncidenciasActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
                     }
                 }catch (Exception e){
                     Log.e("Error JSON", e.getMessage());
@@ -163,6 +164,7 @@ public class AddIncidenciasActivity extends AppCompatActivity {
                     params.put("descripcion", editTextDescripcionIncidencia.getText().toString());
                     params.put("imagen", imagenBase64);
                     params.put("encode", String.valueOf(true));
+                    clearEditText();
                     return new JSONObject(params).toString().getBytes();
                 }
             };
@@ -326,5 +328,9 @@ public class AddIncidenciasActivity extends AppCompatActivity {
     private void setTokenUser() {
         SharedPreferences preferences = getSharedPreferences("preferenceSession", Context.MODE_PRIVATE);
         ACCESS_TOKEN = preferences.getString("access_token", null);
+    }
+
+    private void clearEditText() {
+        editTextDescripcionIncidencia.setText(null);
     }
 }

@@ -11,14 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.jherrera.incidencias.R;
+import com.jherrera.incidencias.models.Empleados;
 import com.jherrera.incidencias.models.TiposIncidencias;
 
 import java.util.ArrayList;
 
-public class TiposIncidenciasSpinnerAdapter extends ArrayAdapter<TiposIncidencias> {
+public class EmpleadosSpinnerAdapter extends ArrayAdapter<Empleados> {
 
-    public TiposIncidenciasSpinnerAdapter(@NonNull Context context, ArrayList<TiposIncidencias> listaTipos) {
-        super(context, 0, listaTipos);
+    public EmpleadosSpinnerAdapter(@NonNull Context context, ArrayList<Empleados> listaEmpleados) {
+        super(context, 0, listaEmpleados);
     }
 
     @NonNull
@@ -40,16 +41,16 @@ public class TiposIncidenciasSpinnerAdapter extends ArrayAdapter<TiposIncidencia
     {
         // It is used to set our custom view.
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.tipos_incidencias_spinner_layout, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.empleados_spinner_layout, parent, false);
         }
 
-        TextView textViewName = convertView.findViewById(R.id.textViewLayoutSpinnerNombreTipo);
-        TiposIncidencias item = getItem(position);
+        TextView textViewName = convertView.findViewById(R.id.textViewLayoutSpinnerEmpleado);
+        Empleados item = getItem(position);
 
         // It is used the name to the TextView when the
         // current item is not null.
         if (item != null) {
-            textViewName.setText(item.getNombreTipoIncidencia());
+            textViewName.setText(item.getNombreCompleto());
         }
         return convertView;
     }

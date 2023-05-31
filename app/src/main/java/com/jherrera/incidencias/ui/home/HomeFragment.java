@@ -154,13 +154,17 @@ public class HomeFragment extends Fragment {
             StringRequest request = new StringRequest(Request.Method.GET, API.URL+"/incidencias?"+searchText+"&page="+pagina, response -> {
                 try {
                     JSONObject json = new JSONObject(response);
-                    JSONObject data = json.getJSONObject("incidencias");
-                    jsonArrayIncidencias = data.getJSONArray("data");
-                    totalIncidencias = data.getInt("total");
-                    totalMostrado = data.getInt("to");
-                    //configurando recycler view
-                    IncidenciasAdapter adapter = new IncidenciasAdapter(jsonArrayIncidencias, viewContext.getContext());
-                    recyclerViewIncidencias.setAdapter(adapter);
+                    if (json.has("incidencias")) {
+                        JSONObject data = json.getJSONObject("incidencias");
+                        jsonArrayIncidencias = data.getJSONArray("data");
+                        totalIncidencias = data.getInt("total");
+                        totalMostrado = data.getInt("to");
+                        //configurando recycler view
+                        IncidenciasAdapter adapter = new IncidenciasAdapter(jsonArrayIncidencias, viewContext.getContext());
+                        recyclerViewIncidencias.setAdapter(adapter);
+                    }else {
+                        Toast.makeText(viewContext.getContext(), "No tiene ningún registro de incidencias", Toast.LENGTH_LONG).show();
+                    }
                 }catch (Exception e){
                     Log.e("Error JSON", e.getMessage());
                 }

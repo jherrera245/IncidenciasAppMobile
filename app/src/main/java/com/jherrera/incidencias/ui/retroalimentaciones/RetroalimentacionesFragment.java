@@ -1,20 +1,61 @@
 package com.jherrera.incidencias.ui.retroalimentaciones;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jherrera.incidencias.AddIncidenciasActivity;
+import com.jherrera.incidencias.AddRetroalimentacionActivity;
+import com.jherrera.incidencias.R;
+import com.jherrera.incidencias.api.API;
+import com.jherrera.incidencias.controllers.RetroalimentacionesAdapter;
 import com.jherrera.incidencias.databinding.FragmentRetroalimentacionesBinding;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RetroalimentacionesFragment extends Fragment {
 
     private FragmentRetroalimentacionesBinding binding;
+    private static String ACCESS_TOKEN;
+    private RecyclerView recyclerViewRetroalimentaciones;
+    private JSONArray jsonArrayRetroalimentaciones;
+    private EditText editTextSearch;
+    private FloatingActionButton buttonOptions;
+    private FloatingActionButton buttonSiguiente;
+    private FloatingActionButton buttonAnterior;
+    private boolean isVisibleOptionButtons = false;
+    private View viewContext;
+
+    //para paginacion
+    private int totalRetroalimentaciones = 0;
+    private int totalMostrado = 0;
+    private int pagina = 1;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -22,6 +63,129 @@ public class RetroalimentacionesFragment extends Fragment {
         View root = binding.getRoot();
 
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setTokenUser();
+        setInitComponents(view);
+        getRetroalimentaciones();
+        setEventSearch();
+        setActionsButtons();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getRetroalimentaciones();
+    }
+
+    private void setActionsButtons() {
+        buttonOptions.setOnClickListener(view -> {
+            if (!isVisibleOptionButtons) {
+                buttonAnterior.show();
+                buttonSiguiente.show();
+                isVisibleOptionButtons = true;
+            }else {
+                buttonAnterior.hide();
+                buttonSiguiente.hide();
+                isVisibleOptionButtons = false;
+            }
+        });
+
+        buttonSiguiente.setOnClickListener(view -> {
+            if (totalMostrado < totalRetroalimentaciones) {
+                pagina++;
+                getRetroalimentaciones();
+            }
+        });
+
+        buttonAnterior.setOnClickListener(view -> {
+            if (pagina>0){
+                pagina--;
+                getRetroalimentaciones();
+            }
+        });
+    }
+
+    private void setEventSearch() {
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                getRetroalimentaciones();
+            }
+        });
+    }
+
+    private void setInitComponents(View view) {
+        this.viewContext = view;
+        editTextSearch = viewContext.findViewById(R.id.editTextSearch);
+        buttonOptions = viewContext.findViewById(R.id.buttonOptions);
+        buttonSiguiente = viewContext.findViewById(R.id.buttonSiguiente);
+        buttonAnterior = viewContext.findViewById(R.id.buttonAnterior);
+        recyclerViewRetroalimentaciones = viewContext.findViewById(R.id.recyclerRetroalimentaciones);
+        recyclerViewRetroalimentaciones.setLayoutManager(new LinearLayoutManager(viewContext.getContext()));
+
+        buttonAnterior.setVisibility(View.GONE);
+        buttonSiguiente.setVisibility(View.GONE);
+    }
+
+    private void getRetroalimentaciones() {
+        RequestQueue queue = Volley.newRequestQueue(viewContext.getContext());
+        try {
+            String searchText = "searchText="+editTextSearch.getText().toString();
+            StringRequest request = new StringRequest(Request.Method.GET, API.URL+"/retroalimentaciones?"+searchText+"&page="+pagina, response -> {
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if (json.has("retroalimentaciones")) {
+                        JSONObject data = json.getJSONObject("retroalimentaciones");
+                        jsonArrayRetroalimentaciones = data.getJSONArray("data");
+                        totalRetroalimentaciones = data.getInt("total");
+                        totalMostrado = data.getInt("to");
+                        //configurando recycler view
+                        RetroalimentacionesAdapter adapter = new RetroalimentacionesAdapter(jsonArrayRetroalimentaciones, viewContext.getContext());
+                        recyclerViewRetroalimentaciones.setAdapter(adapter);
+                    }else {
+                        Toast.makeText(viewContext.getContext(), "No tiene ninguna retroalimentación", Toast.LENGTH_LONG).show();
+                    }
+                }catch (Exception e){
+                    Log.e("Error JSON", e.getMessage());
+                }
+            }, error -> {
+                Toast.makeText(viewContext.getContext(), "Error petición "+error.getMessage(), Toast.LENGTH_SHORT).show();
+            }){
+                @Nullable
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("Accept", "application/json");
+                    headers.put("Connection", "keep-alive");
+                    headers.put("Authorization", "Bearer "+ACCESS_TOKEN);
+                    return headers;
+                }
+            };
+
+            queue.add(request);
+        }catch (Exception e) {
+            Toast.makeText(viewContext.getContext(), "Error en tiempo de ejecución "+e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setTokenUser() {
+        SharedPreferences preferences = getActivity().getSharedPreferences("preferenceSession", Context.MODE_PRIVATE);
+        ACCESS_TOKEN = preferences.getString("access_token", null);
     }
 
     @Override

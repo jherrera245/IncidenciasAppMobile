@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/CardViewIncidencias"
+    android:id="@+id/CardViewRetroalimentaciones"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="10dp"
@@ -11,51 +11,18 @@
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constriant_layout_card"
+        android:id="@+id/constraint_layout_card_retroalimentacion"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constriaint_layout_card_head"
+            android:id="@+id/constriaint_layout_card_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/imageViewIncidencia"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_no_imagen"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ProgressBar
-                android:id="@+id/progressBarImage"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/imageViewIncidencia"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constriaint_layout_card_body"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constriaint_layout_card_head">
 
             <TextView
                 android:id="@+id/textViewTipoIncidencia"
@@ -70,65 +37,52 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textViewDescripcion"
+                android:id="@+id/textViewRetroalimentacion"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:fontFamily="@font/aldrich"
-                android:justificationMode="inter_word"
                 android:text="TextView"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewTipoIncidencia" />
 
             <TextView
-                android:id="@+id/textViewEmpleado"
+                android:id="@+id/textViewRevisadoPor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:fontFamily="@font/aldrich"
                 android:text="TextView"
-                android:textStyle="bold"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewDescripcion" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewRetroalimentacion" />
 
             <TextView
-                android:id="@+id/textViewDepartamento"
+                android:id="@+id/textViewCargo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:fontFamily="@font/aldrich"
                 android:text="TextView"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewEmpleado" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewRevisadoPor" />
 
             <TextView
-                android:id="@+id/textViewFechaIncidencia"
+                android:id="@+id/textViewFechaRevision"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:fontFamily="@font/aldrich"
                 android:text="TextView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewDepartamento" />
-
-            <TextView
-                android:id="@+id/textViewEstado"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/aldrich"
-                android:text="TextView"
-                android:textAlignment="center"
-                android:textStyle="bold"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewFechaIncidencia" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewCargo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -147,7 +101,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_desing_custom"
-                android:text="@string/button_send_notificacion"
+                android:text="@string/button_send_notificacion_user"
                 app:icon="@drawable/ic_notification"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -165,17 +119,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/buttonNotificar" />
 
-            <Button
-                android:id="@+id/buttonRetroalimentar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_desing_custom"
-                android:text="@string/button_retroalimenar"
-                app:icon="@drawable/ic_check"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonDetalles" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -150,7 +150,7 @@ public class ModIncidenciasActivity extends AppCompatActivity {
                 try {
                     JSONObject json = new JSONObject(response);
                     if (json.has("message")){
-                        Toast.makeText(ModIncidenciasActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
                     }
                 }catch (Exception e){
                     Log.e("Error JSON", e.getMessage());
@@ -191,7 +191,7 @@ public class ModIncidenciasActivity extends AppCompatActivity {
                 try {
                     JSONObject json = new JSONObject(response);
                     if (json.has("message")){
-                        Toast.makeText(ModIncidenciasActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
                     }
                 }catch (Exception e){
                     Log.e("Error JSON", e.getMessage());

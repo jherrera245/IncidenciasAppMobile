@@ -23,11 +23,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.jherrera.incidencias.AddRetroalimentacionActivity;
 import com.jherrera.incidencias.HomeActivity;
 import com.jherrera.incidencias.ModIncidenciasActivity;
 import com.jherrera.incidencias.R;
 import com.jherrera.incidencias.api.API;
 import com.jherrera.incidencias.models.Incidencias;
+import com.jherrera.incidencias.models.UserLoged;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -44,6 +46,7 @@ public class IncidenciasAdapter extends RecyclerView.Adapter<IncidenciasAdapter.
     private Context context;
     private View.OnClickListener clickListener;
     private static String ACCESS_TOKEN;
+    private UserLoged loged;
 
     public IncidenciasAdapter(JSONArray jsonArrayIncidencias, Context context) {
         this.jsonArrayIncidencias = jsonArrayIncidencias;
@@ -51,7 +54,7 @@ public class IncidenciasAdapter extends RecyclerView.Adapter<IncidenciasAdapter.
         setTokenUser();
     }
 
-    //crea un nuevo objeto de tipo tarea
+    //crea un nuevo objeto de tipo incidencia
     private Incidencias getIncidencias(JSONObject jsonIncidencia) {
         try {
             return new Incidencias(
@@ -66,7 +69,7 @@ public class IncidenciasAdapter extends RecyclerView.Adapter<IncidenciasAdapter.
                     Integer.parseInt(jsonIncidencia.getString("resolucion"))
             );
         }catch (JSONException e) {
-            Log.e("Error al crear objeto tarea:", e.getMessage());
+            Log.e("Error al crear objeto:", e.getMessage());
             return null;
         }
     }
@@ -102,7 +105,12 @@ public class IncidenciasAdapter extends RecyclerView.Adapter<IncidenciasAdapter.
         holder.buttonDetalles.setOnClickListener(view -> {
             Intent intent = new Intent(context, ModIncidenciasActivity.class);
             intent.putExtra("id", incidencia.getId());
-            intent.putExtra("access_token", ACCESS_TOKEN);
+            context.startActivity(intent);
+        });
+
+        holder.buttonRevisar.setOnClickListener(view -> {
+            Intent intent = new Intent(context, AddRetroalimentacionActivity.class);
+            intent.putExtra("idIncidencia", incidencia.getId());
             context.startActivity(intent);
         });
     }
@@ -120,23 +128,33 @@ public class IncidenciasAdapter extends RecyclerView.Adapter<IncidenciasAdapter.
             }
         });
 
-        holder.textViewTipo.setText(incidencia.getNombreTipo());
-        holder.textViewDescripcion.setText(incidencia.getDescripcionIncidencia());
+        holder.textViewTipo.setText("Tipo de incidencia: "+incidencia.getNombreTipo());
+        holder.textViewDescripcion.setText("Descripción: "+incidencia.getDescripcionIncidencia());
         holder.textViewEmpleado.setText("Reportado por: "+incidencia.getNombreEmpleado());
         holder.textViewDepartamento.setText("Departamento: "+incidencia.getDepartamentoEmpleado());
-        holder.textViewFecha.setText(incidencia.getFechaIncidencia());
+        holder.textViewFecha.setText("Fecha de reporte: "+incidencia.getFechaIncidencia());
 
         switch (incidencia.getStatusResolucion()) {
             case 0:
                 holder.textViewEstado.setText("En revisión");
-                holder.textViewEstado.setTextColor(Color.RED);
+                holder.textViewEstado.setTextColor(Color.GRAY);
                 break;
             case 1:
                 holder.textViewEstado.setText("Acción Correctiva");
-                holder.textViewEstado.setTextColor(Color.YELLOW);
+                holder.textViewEstado.setTextColor(Color.GREEN);
+                break;
             case 2:
                 holder.textViewEstado.setText("Acción Preventiva");
-                holder.textViewEstado.setTextColor(Color.BLUE);
+                holder.textViewEstado.setTextColor(Color.DKGRAY);
+                break;
+            case 3:
+                holder.textViewEstado.setText("Sin solución");
+                holder.textViewEstado.setTextColor(Color.RED);
+                break;
+        }
+
+        if (loged.getRol() == 0) {
+            holder.buttonRevisar.setVisibility(View.GONE);
         }
     }
 
@@ -147,7 +165,7 @@ public class IncidenciasAdapter extends RecyclerView.Adapter<IncidenciasAdapter.
                 try {
                     JSONObject json = new JSONObject(response);
                     if (json.has("message_id")){
-                        Toast.makeText(context, "Notificación enviada al adminitrador", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Notificación enviada al administrador", Toast.LENGTH_SHORT).show();
                     }
                 }catch (Exception e){
                     Log.e("Error JSON", e.getMessage());
@@ -203,6 +221,7 @@ public class IncidenciasAdapter extends RecyclerView.Adapter<IncidenciasAdapter.
 
         private Button buttonNotificar;
         private Button buttonDetalles;
+        private Button buttonRevisar;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageViewIncidencia = itemView.findViewById(R.id.imageViewIncidencia);
@@ -215,11 +234,18 @@ public class IncidenciasAdapter extends RecyclerView.Adapter<IncidenciasAdapter.
             progressBarImagen = itemView.findViewById(R.id.progressBarImage);
             buttonDetalles = itemView.findViewById(R.id.buttonDetalles);
             buttonNotificar = itemView.findViewById(R.id.buttonNotificar);
+            buttonRevisar = itemView.findViewById(R.id.buttonRetroalimentar);
         }
     }
 
     private void setTokenUser() {
         SharedPreferences preferences = context.getSharedPreferences("preferenceSession", Context.MODE_PRIVATE);
         ACCESS_TOKEN = preferences.getString("access_token", null);
+
+        loged = new UserLoged(
+                preferences.getString("name", null),
+                preferences.getString("email", null),
+                preferences.getInt("rol", 0)
+        );
     }
 }

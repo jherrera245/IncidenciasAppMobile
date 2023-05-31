@@ -18,12 +18,39 @@
     <string name="edit_text_descripcion_incidencia">Ingresa la descripción de la incidencia</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Retroalimentaciones String -->
+    <string name="text_view_title_retroalimentacion">Lista de retroalimentaciones</string>
+    <string name="edit_text_search_text_retroalimentacion">Buscar Retroalimentacion...</string>
+
+
+    <!-- Users String -->
+    <string name="text_view_title_users">Lista de usuarios</string>
+    <string name="edit_text_search_text_users">Buscar Usuarios...</string>
+
+    <!-- Add Retroalimentacion -->
+    <string name="text_view_title_add_retroalimentacion">Retroalimentación de Incidencia</string>
+    <string name="edit_text_retroalimentacion">Ingresa la retroaliementación de la incidencia</string>
+    <string name="text_view_estado_retroalimentacion">Estado de Incidencia</string>
+    <string name="radio_button_revision">En revisión</string>
+    <string name="radio_button_correccion">Acción Correctiva</string>
+    <string name="radio_button_preventivo">Acción Preventiva</string>
+    <string name="radio_button_sin_solucion">Sin solución</string>
+
+    <!-- Add User -->
+    <string name="text_view_spinner_empleados">Lista de empleados</string>
+    <string name="edit_text_name">Ingresa el nombre de usuario</string>
+    <string name="edit_text_email">Ingresa el correo electronico</string>
+    <string name="edit_text_password">Ingresa la contraseña</string>
+
     <!--Buttons-->
     <string name="button_guardar">Guardar Registro</string>
     <string name="button_send_notificacion">Notificar a Administrador</string>
+    <string name="button_send_notificacion_user">Notificar a Empleado</string>
     <string name="button_detalles">Mostrar Detalles</string>
     <string name="button_actualizar">Actualizar Registro</string>
     <string name="button_borrar">Borrar Registro</string>
+    <string name="button_remover">Remover retroalimentación</string>
+    <string name="button_retroalimenar">Revisar Incidencia</string>
 
     <!---Menu Item-->
     <string name="menu_home">Home</string>
