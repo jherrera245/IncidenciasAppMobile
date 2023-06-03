@@ -209,18 +209,18 @@ public class ModUsuarioActivity extends AppCompatActivity {
                 Toast.makeText(this, "Ingresa la clave", Toast.LENGTH_SHORT).show();
             }else{
                 setRolUsuario();
-                actualizarRetroalimentacion();
+                actualizarUsuario();
 
             }
         });
 
         //accion para eliminar registro
         buttonBorrarUser.setOnClickListener(view -> {
-
+            borrarUsuario();
         });
     }
 
-    private void actualizarRetroalimentacion() {
+    private void actualizarUsuario() {
         RequestQueue queue = Volley.newRequestQueue(this);
         try {
             StringRequest request = new StringRequest(Request.Method.PUT, API.URL+"/usuarios/"+idUser, response -> {
@@ -271,6 +271,38 @@ public class ModUsuarioActivity extends AppCompatActivity {
 
         if (radioButtonAdmin.isChecked()) {
             rolUser = 1;
+        }
+    }
+
+    private void borrarUsuario() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        try {
+            StringRequest request = new StringRequest(Request.Method.DELETE, API.URL+"/usuarios/"+idUser, response -> {
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if (json.has("message")){
+                        Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){
+                    Log.e("Error JSON", e.getMessage());
+                }
+            }, error -> {
+                Toast.makeText(this, "Error petición "+error.getMessage(), Toast.LENGTH_LONG).show();
+            }){
+                @Nullable
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("Accept", "application/json");
+                    headers.put("Connection", "keep-alive");
+                    headers.put("Authorization", "Bearer "+ACCESS_TOKEN);
+                    return headers;
+                }
+            };
+            queue.add(request);
+        }catch (Exception e) {
+            Toast.makeText(this, "Error en tiempo de ejecución "+e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
