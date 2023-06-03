@@ -71,6 +71,7 @@ public class AddUsuarioActivity extends AppCompatActivity {
         buttonGuadarUser = findViewById(R.id.buttonGuadarUser);
         listaEmpleados = new ArrayList<>();
         radioButtonEmpleado.setChecked(true);
+
     }
 
     private void setDataSpinner() {
@@ -143,17 +144,69 @@ public class AddUsuarioActivity extends AppCompatActivity {
     private void setActionButtons() {
         //agregar aqui funciones de botones
         buttonGuadarUser.setOnClickListener(view -> {
-            setRolUsuario();
             //agregar if con validaciones de campos
+            if (editTextName.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Ingresa el nombre", Toast.LENGTH_SHORT).show();
+            }else if(editTextEmail.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Ingresa el email", Toast.LENGTH_SHORT).show();
+            }else if(editTextPassword.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Ingresa la clave", Toast.LENGTH_SHORT).show();
+            }else{
+                setEstadoRol();
+                guardarUsuario();
+            }
         });
     }
 
-    private void setRolUsuario() {
-        if (radioButtonEmpleado.isChecked()) {
+    private void guardarUsuario() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        try {
+            StringRequest request = new StringRequest(Request.Method.POST, API.URL+"/usuarios", response -> {
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if (json.has("message")){
+                        Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){
+                    Log.e("Error JSON", e.getMessage());
+                }
+            }, error -> {
+                Toast.makeText(this, "Error petición "+error.getMessage(), Toast.LENGTH_LONG).show();
+            }){
+                @Nullable
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("Accept", "application/json");
+                    headers.put("Connection", "keep-alive");
+                    headers.put("Authorization", "Bearer "+ACCESS_TOKEN);
+                    return headers;
+                }
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    HashMap<String, String> params = new HashMap<String, String>();
+
+                    clearEditText();params.put("name", String.valueOf(editTextName.getText().toString()));
+                    params.put("email", editTextEmail.getText().toString());
+                    params.put("password", editTextPassword.getText().toString());
+                    params.put("id_empleado", String.valueOf(idEmpleado));
+                    params.put("is_admin", String.valueOf(rolUser));
+                    return new JSONObject(params).toString().getBytes();
+                }
+            };
+            queue.add(request);
+        }catch (Exception e) {
+            Toast.makeText(this, "Error en tiempo de ejecución "+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setEstadoRol() {
+        if (radioButtonAdmin.isChecked()) {
             rolUser = 0;
         }
 
-        if (radioButtonAdmin.isChecked()) {
+        if (radioButtonEmpleado.isChecked()) {
             rolUser = 1;
         }
     }

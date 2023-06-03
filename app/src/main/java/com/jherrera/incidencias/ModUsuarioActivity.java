@@ -201,12 +201,67 @@ public class ModUsuarioActivity extends AppCompatActivity {
         buttonBorrarUser.setOnClickListener(view -> {
             setRolUsuario();
             //agregar if con validaciones de campos
+            if (editTextName.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Ingresa el nombre", Toast.LENGTH_SHORT).show();
+            }else if(editTextEmail.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Ingresa el email", Toast.LENGTH_SHORT).show();
+            }else if(editTextPassword.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Ingresa la clave", Toast.LENGTH_SHORT).show();
+            }else{
+                setRolUsuario();
+                actualizarRetroalimentacion();
+
+            }
         });
 
         //accion para eliminar registro
         buttonBorrarUser.setOnClickListener(view -> {
 
         });
+    }
+
+    private void actualizarRetroalimentacion() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        try {
+            StringRequest request = new StringRequest(Request.Method.PUT, API.URL+"/usuarios/"+idUser, response -> {
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if (json.has("message")){
+                        Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){
+                    Log.e("Error JSON", e.getMessage());
+                }
+            }, error -> {
+                Toast.makeText(this, "Error petición "+error.getMessage(), Toast.LENGTH_LONG).show();
+            }){
+                @Nullable
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("Accept", "application/json");
+                    headers.put("Connection", "keep-alive");
+                    headers.put("Authorization", "Bearer "+ACCESS_TOKEN);
+                    return headers;
+                }
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    params.put("id", String.valueOf(idUser));
+                    params.put("name", String.valueOf(editTextName.getText().toString()));
+                    params.put("email", editTextEmail.getText().toString());
+                    params.put("password", editTextPassword.getText().toString());
+                    params.put("id_empleado", String.valueOf(idEmpleado));
+                    params.put("is_admin", String.valueOf(rolUser));
+
+                    return new JSONObject(params).toString().getBytes();
+                }
+            };
+            queue.add(request);
+        }catch (Exception e) {
+            Toast.makeText(this, "Error en tiempo de ejecución "+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setRolUsuario() {
