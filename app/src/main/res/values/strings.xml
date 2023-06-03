@@ -45,6 +45,13 @@
     <string name="radio_button_admin">Administrador</string>
     <string name="radio_button_empleado">Empleado</string>
 
+    <!--Profile-->
+    <string name="text_view_profile_name">Username</string>
+    <string name="text_view_profile_email">Email</string>
+    <string name="text_view_profile_empleado">Nombre Completo</string>
+    <string name="text_view_profile_cargo">Cargo</string>
+    <string name="text_view_profile_departamento">Departamento</string>
+
     <!--Buttons-->
     <string name="button_guardar">Guardar Registro</string>
     <string name="button_send_notificacion">Notificar a Administrador</string>

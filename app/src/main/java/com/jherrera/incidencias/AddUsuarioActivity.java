@@ -64,14 +64,13 @@ public class AddUsuarioActivity extends AppCompatActivity {
     private void setInitComponents() {
         spinnerEmpleados = findViewById(R.id.spinnerEmpleados);
         editTextName = findViewById(R.id.editTextName);
-        editTextEmail = findViewById(R.id.editTextName);
-        editTextPassword = findViewById(R.id.editTextName);
+        editTextEmail = findViewById(R.id.editTextEmail);
+        editTextPassword = findViewById(R.id.editTextPassword);
         radioButtonAdmin = findViewById(R.id.radioButtonAdmin);
         radioButtonEmpleado = findViewById(R.id.radioButtonEmpleado);
         buttonGuadarUser = findViewById(R.id.buttonGuadarUser);
         listaEmpleados = new ArrayList<>();
         radioButtonEmpleado.setChecked(true);
-
     }
 
     private void setDataSpinner() {
@@ -161,7 +160,7 @@ public class AddUsuarioActivity extends AppCompatActivity {
     private void guardarUsuario() {
         RequestQueue queue = Volley.newRequestQueue(this);
         try {
-            StringRequest request = new StringRequest(Request.Method.POST, API.URL+"/usuarios", response -> {
+            StringRequest request = new StringRequest(Request.Method.POST, API.URL+"/users", response -> {
                 try {
                     JSONObject json = new JSONObject(response);
                     if (json.has("message")){
@@ -186,12 +185,12 @@ public class AddUsuarioActivity extends AppCompatActivity {
                 @Override
                 public byte[] getBody() throws AuthFailureError {
                     HashMap<String, String> params = new HashMap<String, String>();
-
-                    clearEditText();params.put("name", String.valueOf(editTextName.getText().toString()));
+                    params.put("name", editTextName.getText().toString());
                     params.put("email", editTextEmail.getText().toString());
                     params.put("password", editTextPassword.getText().toString());
                     params.put("id_empleado", String.valueOf(idEmpleado));
-                    params.put("is_admin", String.valueOf(rolUser));
+                    params.put("admin", String.valueOf(rolUser));
+                    clearEditText();
                     return new JSONObject(params).toString().getBytes();
                 }
             };

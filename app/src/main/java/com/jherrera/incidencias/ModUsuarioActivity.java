@@ -198,7 +198,7 @@ public class ModUsuarioActivity extends AppCompatActivity {
 
     private void setActionButtons() {
         //agregar aqui funciones de botones
-        buttonBorrarUser.setOnClickListener(view -> {
+        buttonActualizarUser.setOnClickListener(view -> {
             setRolUsuario();
             //agregar if con validaciones de campos
             if (editTextName.getText().toString().isEmpty()) {
@@ -208,9 +208,7 @@ public class ModUsuarioActivity extends AppCompatActivity {
             }else if(editTextPassword.getText().toString().isEmpty()) {
                 Toast.makeText(this, "Ingresa la clave", Toast.LENGTH_SHORT).show();
             }else{
-                setRolUsuario();
                 actualizarUsuario();
-
             }
         });
 
@@ -223,7 +221,7 @@ public class ModUsuarioActivity extends AppCompatActivity {
     private void actualizarUsuario() {
         RequestQueue queue = Volley.newRequestQueue(this);
         try {
-            StringRequest request = new StringRequest(Request.Method.PUT, API.URL+"/usuarios/"+idUser, response -> {
+            StringRequest request = new StringRequest(Request.Method.PUT, API.URL+"/users/"+idUser, response -> {
                 try {
                     JSONObject json = new JSONObject(response);
                     if (json.has("message")){
@@ -248,12 +246,12 @@ public class ModUsuarioActivity extends AppCompatActivity {
                 @Override
                 public byte[] getBody() throws AuthFailureError {
                     HashMap<String, String> params = new HashMap<String, String>();
-                    params.put("id", String.valueOf(idUser));
+                    //params.put("id", String.valueOf(idUser));
                     params.put("name", String.valueOf(editTextName.getText().toString()));
                     params.put("email", editTextEmail.getText().toString());
                     params.put("password", editTextPassword.getText().toString());
                     params.put("id_empleado", String.valueOf(idEmpleado));
-                    params.put("is_admin", String.valueOf(rolUser));
+                    params.put("admin", String.valueOf(rolUser));
 
                     return new JSONObject(params).toString().getBytes();
                 }
@@ -277,7 +275,7 @@ public class ModUsuarioActivity extends AppCompatActivity {
     private void borrarUsuario() {
         RequestQueue queue = Volley.newRequestQueue(this);
         try {
-            StringRequest request = new StringRequest(Request.Method.DELETE, API.URL+"/usuarios/"+idUser, response -> {
+            StringRequest request = new StringRequest(Request.Method.DELETE, API.URL+"/users/"+idUser, response -> {
                 try {
                     JSONObject json = new JSONObject(response);
                     if (json.has("message")){

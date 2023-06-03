@@ -76,6 +76,13 @@ public class UsersFragment extends Fragment {
         setActionsButtons();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getUsers();
+    }
+
+
     private void setInitComponents(View view) {
         this.viewContext = view;
         editTextSearch = viewContext.findViewById(R.id.editTextSearch);
