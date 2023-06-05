@@ -97,7 +97,7 @@
             app:layout_constraintTop_toBottomOf="@+id/constriaint_layout_card_body">
 
             <Button
-                android:id="@+id/buttonNotificar"
+                android:id="@+id/buttonNotificarEmpleado"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_desing_custom"
@@ -117,7 +117,7 @@
                 app:icon="@drawable/ic_details"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonNotificar" />
+                app:layout_constraintTop_toBottomOf="@+id/buttonNotificarEmpleado" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

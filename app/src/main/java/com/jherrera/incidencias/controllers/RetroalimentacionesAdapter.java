@@ -132,6 +132,8 @@ public class RetroalimentacionesAdapter extends RecyclerView.Adapter<Retroalimen
                     JSONObject json = new JSONObject(response);
                     if (json.has("multicast_id")){
                         Toast.makeText(context, "Notificación enviada al empleado", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(context, "No se puedo enviar la notifcación (Token de usuario no disponible)", Toast.LENGTH_SHORT).show();
                     }
                 }catch (Exception e){
                     Log.e("Error JSON", e.getMessage());
@@ -184,7 +186,7 @@ public class RetroalimentacionesAdapter extends RecyclerView.Adapter<Retroalimen
             textViewRevisadoPor = itemView.findViewById(R.id.textViewRevisadoPor);
             textViewCargo = itemView.findViewById(R.id.textViewCargo);
             textViewFecha = itemView.findViewById(R.id.textViewFechaRevision);
-            buttonSendNotificacion = itemView.findViewById(R.id.buttonNotificar);
+            buttonSendNotificacion = itemView.findViewById(R.id.buttonNotificarEmpleado);
             buttonDetalles = itemView.findViewById(R.id.buttonDetalles);
         }
     }
