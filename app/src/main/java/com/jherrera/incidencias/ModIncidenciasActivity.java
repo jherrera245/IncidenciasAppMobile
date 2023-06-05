@@ -41,6 +41,7 @@ import com.jherrera.incidencias.api.API;
 import com.jherrera.incidencias.controllers.TiposIncidenciasSpinnerAdapter;
 import com.jherrera.incidencias.databinding.ActivityModIncidenciasBinding;
 import com.jherrera.incidencias.models.TiposIncidencias;
+import com.jherrera.incidencias.reports.ReportPDF;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -49,6 +50,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,6 +73,7 @@ public class ModIncidenciasActivity extends AppCompatActivity {
     private EditText editTextDescripcionIncidencia;
     private Button buttonActualizarIncidencia;
     private Button buttonBorrarInicidencia;
+    private Button buttonReportPDF;
     private Uri uriImagen;
     private String imagenBase64;
     private static final int REQUEST_CODE_CAMERA = 100;
@@ -121,6 +124,7 @@ public class ModIncidenciasActivity extends AppCompatActivity {
         editTextDescripcionIncidencia = findViewById(R.id.editTextModDescripcionInciencia);
         buttonActualizarIncidencia = findViewById(R.id.buttonActualizarIncidencias);
         buttonBorrarInicidencia = findViewById(R.id.buttonBorrarIncidencias);
+        buttonReportPDF = findViewById(R.id.buttonPDFReportIncidencia);
         listaTiposIncidencias = new ArrayList<>();
     }
 
@@ -140,6 +144,46 @@ public class ModIncidenciasActivity extends AppCompatActivity {
         buttonBorrarInicidencia.setOnClickListener(view -> {
             borrarIncidencia();
         });
+
+        buttonReportPDF.setOnClickListener(view -> {
+            getDataReport();
+        });
+    }
+
+    private void getDataReport() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        try {
+            StringRequest request = new StringRequest(Request.Method.GET, API.URL+"/reports-by-id?id="+idIncidencia, response -> {
+                try {
+                    JSONObject json = new JSONObject(response);
+                    ReportPDF pdf = new ReportPDF(json, this);
+                    try {
+                        pdf.createPDFById();
+                    }catch (FileNotFoundException e) {
+                        Toast.makeText(this, "No se pudo crear el pdf", Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){
+                    Log.e("Error JSON", e.getMessage());
+                }
+            }, error -> {
+                Toast.makeText(this, "Error petición "+error.getMessage(), Toast.LENGTH_LONG).show();
+            }){
+                @Nullable
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    headers.put("Accept", "application/json");
+                    headers.put("Connection", "keep-alive");
+                    headers.put("Authorization", "Bearer "+ACCESS_TOKEN);
+                    return headers;
+                }
+            };
+
+            queue.add(request);
+        }catch (Exception e) {
+            Toast.makeText(this, "Error en tiempo de ejecución "+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void actualizarIncidencia() {

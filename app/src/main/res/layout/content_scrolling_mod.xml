@@ -81,5 +81,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonActualizarIncidencias" />
 
+        <Button
+            android:id="@+id/buttonPDFReportIncidencia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/button_desing_custom"
+            android:fontFamily="@font/aldrich"
+            android:text="@string/button_pdf"
+            android:textSize="18sp"
+            app:icon="@drawable/ic_pdf"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonBorrarIncidencias" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
