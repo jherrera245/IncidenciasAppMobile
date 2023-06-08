@@ -105,9 +105,13 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_reports) {
-            Intent intent = new Intent(this, ReportsActivity.class);
-            startActivity(intent);
+        if (myUser.getRol() == 1) {
+            if (id == R.id.action_reports) {
+                Intent intent = new Intent(this, ReportsActivity.class);
+                startActivity(intent);
+            }
+        }else {
+            Toast.makeText(this, "No tiene acceso a los reportes", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);

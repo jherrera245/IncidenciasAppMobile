@@ -45,7 +45,6 @@
         android:hint="@string/edit_text_email_login"
         android:inputType="textWebEmailAddress"
         android:padding="10dp"
-        android:text="herrera_jh17@outlook.com"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -63,7 +62,6 @@
         android:hint="@string/edit_text_password_login"
         android:inputType="textPassword|textWebPassword"
         android:padding="10dp"
-        android:text="245jh17@"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.555"
         app:layout_constraintStart_toStartOf="parent"
